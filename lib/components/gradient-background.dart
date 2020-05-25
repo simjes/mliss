@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mliss/constants.dart';
 
 class MlissScaffold extends StatelessWidget {
   final Widget child;
@@ -13,9 +14,9 @@ class MlissScaffold extends StatelessWidget {
         body: Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [Colors.blue, Colors.red],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [kBackgroundLightColor, kBackgroundDarkColor],
         ),
       ),
       child: Column(
