@@ -49,6 +49,7 @@ class CustomSliderTrackShape extends SliderTrackShape
       ..color = activeTrackColorTween.evaluate(enableAnimation);
     final Paint inactivePaint = Paint()
       ..color = inactiveTrackColorTween.evaluate(enableAnimation);
+
     Paint leftTrackPaint;
     Paint rightTrackPaint;
     switch (textDirection) {
@@ -70,20 +71,47 @@ class CustomSliderTrackShape extends SliderTrackShape
       isDiscrete: isDiscrete,
     );
 
+    final activeTrackColorGradient = LinearGradient(
+        colors: [kSliderActiveStartColor, kSliderActiveEndColor]);
+
+    final baseLeftBlurPaint = Paint()
+      ..strokeWidth = trackRect.height
+      ..style = PaintingStyle.stroke
+      ..maskFilter = MaskFilter.blur(BlurStyle.solid, trackRect.height + 2);
+
+    final rightBlurPaint = Paint()
+      ..strokeWidth = trackRect.height
+      ..style = PaintingStyle.stroke
+      ..color = kSliderInactiveColor
+      ..maskFilter = MaskFilter.blur(BlurStyle.solid, trackRect.height + 2);
+
     // The arc rects create a semi-circle with radius equal to track height.
     final Rect leftTrackArcRect = Rect.fromLTWH(
         trackRect.left, trackRect.top, trackRect.height, trackRect.height);
-    if (!leftTrackArcRect.isEmpty)
+
+    if (!leftTrackArcRect.isEmpty) {
+      final leftTrackArcBlur = baseLeftBlurPaint
+        ..shader = activeTrackColorGradient.createShader(leftTrackArcRect);
+
       context.canvas.drawArc(
           leftTrackArcRect, math.pi / 2, math.pi, false, leftTrackPaint);
+      context.canvas.drawArc(
+          leftTrackArcRect, math.pi / 2, math.pi, false, leftTrackArcBlur);
+    }
+
     final Rect rightTrackArcRect = Rect.fromLTWH(
         trackRect.right - trackRect.height / 2,
         trackRect.top,
         trackRect.height,
         trackRect.height);
-    if (!rightTrackArcRect.isEmpty)
+
+    if (!rightTrackArcRect.isEmpty) {
       context.canvas.drawArc(
           rightTrackArcRect, -math.pi / 2, math.pi, false, rightTrackPaint);
+
+      context.canvas.drawArc(
+          rightTrackArcRect, -math.pi / 2, math.pi, false, rightBlurPaint);
+    }
 
     final Size thumbSize =
         sliderTheme.thumbShape.getPreferredSize(isEnabled, isDiscrete);
@@ -92,13 +120,16 @@ class CustomSliderTrackShape extends SliderTrackShape
         trackRect.top,
         thumbCenter.dx - thumbSize.width / 2,
         trackRect.bottom);
+
     if (!leftTrackSegment.isEmpty) {
-      final activeTrackColorGradient = LinearGradient(
-          colors: [kSliderActiveStartColor, kSliderActiveEndColor]);
-      leftTrackPaint
-        ..shader = activeTrackColorGradient.createShader(leftTrackSegment);
+      var leftTrackShader =
+          activeTrackColorGradient.createShader(leftTrackSegment);
+
+      leftTrackPaint..shader = leftTrackShader;
+      final leftTrackBlur = baseLeftBlurPaint..shader = leftTrackShader;
 
       context.canvas.drawRect(leftTrackSegment, leftTrackPaint);
+      context.canvas.drawRect(leftTrackSegment, leftTrackBlur);
     }
 
     final Rect rightTrackSegment = Rect.fromLTRB(
@@ -106,7 +137,10 @@ class CustomSliderTrackShape extends SliderTrackShape
         trackRect.top,
         trackRect.right,
         trackRect.bottom);
-    if (!rightTrackSegment.isEmpty)
+
+    if (!rightTrackSegment.isEmpty) {
       context.canvas.drawRect(rightTrackSegment, rightTrackPaint);
+      context.canvas.drawRect(rightTrackSegment, rightBlurPaint);
+    }
   }
 }

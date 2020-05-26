@@ -11,13 +11,6 @@ class Player extends StatefulWidget {
 
 class _PlayerState extends State<Player> {
   double _sliderValue = 0;
-  bool _sliding = false;
-
-  void setSliding(bool sliding) {
-    setState(() {
-      _sliding = sliding;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +41,7 @@ class _PlayerState extends State<Player> {
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     thumbColor: kSliderHandleColor,
-                    trackHeight: 4, // if sliding increase it
+                    trackHeight: 3,
                     overlayColor: kSliderHandleColor,
                     thumbShape: CustomSliderThumbShape(),
                     trackShape: CustomSliderTrackShape(),
@@ -58,12 +51,6 @@ class _PlayerState extends State<Player> {
                     value: _sliderValue,
                     min: 0,
                     max: 100,
-                    onChangeStart: (value) {
-                      setSliding(true);
-                    },
-                    onChangeEnd: (value) {
-                      setSliding(false);
-                    },
                     onChanged: (double value) {
                       setState(() {
                         _sliderValue = value;
