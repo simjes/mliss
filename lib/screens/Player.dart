@@ -1,6 +1,7 @@
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_conditional_rendering/conditional_switch.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
 import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
@@ -12,55 +13,56 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  static AudioCache audioCache = AudioCache(prefix: 'music/');
-  AudioPlayer player;
-  bool playing = false;
-  bool seeking = false;
-  double _sliderMin = 0;
-  double _sliderMax = 0;
-  double _sliderValue = 0;
+  AudioPlayer _player;
+  AudioCache _audioCache;
+  AudioPlayerState _playerState;
+
+  String _currentSong =
+      'Michael Oakley - California - 03 California (feat. Missing Words).mp3';
+
+  Duration _duration = Duration();
+  Duration _position = Duration();
+
+  @override
+  void initState() {
+    super.initState();
+    initPlayer();
+  }
+
+  void initPlayer() {
+    _player = AudioPlayer();
+    _audioCache = AudioCache(fixedPlayer: _player, prefix: 'music/');
+
+    _player.onDurationChanged.listen((Duration duration) {
+      setState(() {
+        _duration = duration;
+      });
+    });
+
+    _player.onAudioPositionChanged.listen((Duration position) {
+      setState(() {
+        _position = position;
+      });
+    });
+
+    _player.onPlayerStateChanged.listen((AudioPlayerState playerState) {
+      if (playerState == AudioPlayerState.COMPLETED) {
+        print('weee');
+      }
+
+      setState(() {
+        _playerState = playerState;
+      });
+    });
+  }
 
   void play() async {
-    player = await audioCache.play(
-        'Michael Oakley - California - 03 California (feat. Missing Words).mp3');
-
-    player.onAudioPositionChanged.listen((event) {
-      if (!seeking) {
-        setState(() {
-          _sliderValue = event.inMilliseconds.toDouble();
-        });
-      }
-    });
-
-    final duration = await player.getDuration();
-
-    setState(() {
-      playing = true;
-      _sliderMax = duration.toDouble();
-    });
+    _audioCache.play(_currentSong);
   }
 
-  void seek(int position) async {
-    final duration = Duration(milliseconds: position);
-    await player.seek(duration);
-
-    setState(() {
-      seeking = false;
-    });
-  }
-
-  void resume() {
-    player.resume();
-    setState(() {
-      playing = true;
-    });
-  }
-
-  void pause() {
-    player.pause();
-    setState(() {
-      playing = false;
-    });
+  void seekToSeconds(int seconds) async {
+    final duration = Duration(seconds: seconds);
+    await _player.seek(duration);
   }
 
   @override
@@ -98,32 +100,31 @@ class _PlayerState extends State<Player> {
                     overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
                   ),
                   child: Slider(
-                    value: _sliderValue,
-                    min: _sliderMin,
-                    max: _sliderMax,
-                    onChangeStart: (position) {
+                    value: _position.inSeconds.toDouble(),
+                    min: 0,
+                    max: _duration.inSeconds.toDouble(),
+                    onChanged: (double position) {
                       setState(() {
-                        seeking = true;
-                      });
-                    },
-                    onChangeEnd: (position) {
-                      final playTime = position.toInt();
-                      seek(playTime);
-                    },
-                    onChanged: (double value) {
-                      setState(() {
-                        _sliderValue = value;
+                        seekToSeconds(position.toInt());
                       });
                     },
                   ),
                 ),
                 Row(
                   children: <Widget>[
-                    playing
-                        ? IconButton(icon: Icon(Icons.pause), onPressed: pause)
-                        : IconButton(
-                            icon: Icon(Icons.play_arrow),
-                            onPressed: player == null ? play : resume)
+                    ConditionalSwitch.single(
+                        context: context,
+                        valueBuilder: (context) => _playerState,
+                        caseBuilders: {
+                          AudioPlayerState.PLAYING: (context) => IconButton(
+                              icon: Icon(Icons.pause),
+                              onPressed: () => _player.pause()),
+                          AudioPlayerState.PAUSED: (context) => IconButton(
+                              icon: Icon(Icons.play_arrow),
+                              onPressed: () => _player.resume())
+                        },
+                        fallbackBuilder: (context) => IconButton(
+                            icon: Icon(Icons.play_arrow), onPressed: play))
                   ],
                 )
               ],
