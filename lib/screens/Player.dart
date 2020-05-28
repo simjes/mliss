@@ -7,6 +7,7 @@ import 'package:flutter_conditional_rendering/conditional_switch.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
 import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
+import 'package:mliss/components/vinyl.dart';
 import 'package:mliss/constants.dart';
 
 class Player extends StatefulWidget {
@@ -18,6 +19,7 @@ class _PlayerState extends State<Player> {
   AudioPlayer _player;
   AudioCache _audioCache;
   AudioPlayerState _playerState;
+  bool playing = false;
 
   int _currentSongIndex;
 
@@ -68,17 +70,32 @@ class _PlayerState extends State<Player> {
       });
     });
 
-    //  _player.onPlayerCompletion.listen((event) {
-    //   onComplete();
-    //   setState(() {
-    //     position = duration;
-    //   });
-    // });
+    _player.onPlayerCompletion.listen((event) {
+      nextSong();
+    });
 
     _player.onPlayerStateChanged.listen((AudioPlayerState playerState) {
-      if (playerState == AudioPlayerState.COMPLETED) {
-        print('weee');
+      switch (playerState) {
+        case AudioPlayerState.PLAYING:
+          setState(() {
+            playing = true;
+          });
+          break;
+        default:
+          setState(() {
+            playing = false;
+          });
       }
+
+      // if (playerState == AudioPlayerState.COMPLETED) {
+      //   print('weee');
+      // }
+
+      // if (playerState == AudioPlayerState.PAUSED) {
+      //   setState(() {
+      //     playing = false;
+      //   });
+      // }
 
       setState(() {
         _playerState = playerState;
@@ -124,9 +141,19 @@ class _PlayerState extends State<Player> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Container(
-            child: Image(image: AssetImage('assets/music/cover.jpg')),
+          Center(
+            child: Vinyl(
+              assetName: 'assets/music/cover.jpg',
+              playing: playing,
+            ),
           ),
+          // Container(
+          //   child: Image(
+          //     color: kSliderActiveStartColor,
+          //     colorBlendMode: BlendMode.softLight,
+          //     image: AssetImage('assets/music/cover.jpg'),
+          //   ),
+          // ),
           Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Column(
