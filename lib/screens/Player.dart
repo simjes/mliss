@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -17,16 +19,37 @@ class _PlayerState extends State<Player> {
   AudioCache _audioCache;
   AudioPlayerState _playerState;
 
-  String _currentSong =
-      'Michael Oakley - California - 03 California (feat. Missing Words).mp3';
+  int _currentSongIndex;
 
   Duration _duration = Duration();
   Duration _position = Duration();
 
+  List<String> queue = [];
+
   @override
   void initState() {
     super.initState();
+    loadQueue();
     initPlayer();
+  }
+
+  void loadQueue() async {
+    final manifest =
+        await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+    final Map<String, dynamic> manifestMap = jsonDecode(manifest);
+
+    final music = manifestMap.keys
+        .where((element) => element.contains('music/'))
+        .where((element) => element.contains('.mp3'))
+        .map((songPath) => songPath.replaceAll('assets/music/', ""))
+        .map((songPath) => Uri.decodeComponent(songPath))
+        .toList();
+
+    queue = music;
+
+    if (queue.length > 0) {
+      _currentSongIndex = 1;
+    }
   }
 
   void initPlayer() {
@@ -45,6 +68,13 @@ class _PlayerState extends State<Player> {
       });
     });
 
+    //  _player.onPlayerCompletion.listen((event) {
+    //   onComplete();
+    //   setState(() {
+    //     position = duration;
+    //   });
+    // });
+
     _player.onPlayerStateChanged.listen((AudioPlayerState playerState) {
       if (playerState == AudioPlayerState.COMPLETED) {
         print('weee');
@@ -57,7 +87,30 @@ class _PlayerState extends State<Player> {
   }
 
   void play() async {
-    _audioCache.play(_currentSong);
+    if (_currentSongIndex != null) {
+      final song = queue[_currentSongIndex];
+      _audioCache.play(song);
+    }
+  }
+
+  void nextSong() {
+    _currentSongIndex++;
+    if (_currentSongIndex > queue.length - 1) {
+      _currentSongIndex = 0;
+    }
+
+    play();
+  }
+
+  void previousSong() {
+    if (_position.inSeconds < 2) {
+      _currentSongIndex--;
+      if (_currentSongIndex < 0) {
+        _currentSongIndex = queue.length - 1;
+      }
+    }
+
+    play();
   }
 
   void seekToSeconds(int seconds) async {
@@ -111,7 +164,11 @@ class _PlayerState extends State<Player> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.skip_previous),
+                        onPressed: previousSong),
                     ConditionalSwitch.single(
                         context: context,
                         valueBuilder: (context) => _playerState,
@@ -124,7 +181,9 @@ class _PlayerState extends State<Player> {
                               onPressed: () => _player.resume())
                         },
                         fallbackBuilder: (context) => IconButton(
-                            icon: Icon(Icons.play_arrow), onPressed: play))
+                            icon: Icon(Icons.play_arrow), onPressed: play)),
+                    IconButton(
+                        icon: Icon(Icons.skip_next), onPressed: nextSong),
                   ],
                 )
               ],
