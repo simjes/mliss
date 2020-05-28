@@ -9,6 +9,7 @@ import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
 import 'package:mliss/components/vinyl.dart';
 import 'package:mliss/constants.dart';
+import 'package:mliss/services/spotify.dart';
 
 class Player extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
+  SpotifyService spotify;
   AudioPlayer _player;
   AudioCache _audioCache;
   AudioPlayerState _playerState;
@@ -33,6 +35,14 @@ class _PlayerState extends State<Player> {
     super.initState();
     loadQueue();
     initPlayer();
+    tempLoadDiscoverWeekly();
+  }
+
+  void tempLoadDiscoverWeekly() async {
+    spotify = SpotifyService();
+
+    final playlist = await spotify.getDiscoverWeekly();
+    print(playlist);
   }
 
   void loadQueue() async {
@@ -104,10 +114,12 @@ class _PlayerState extends State<Player> {
   }
 
   void play() async {
-    if (_currentSongIndex != null) {
-      final song = queue[_currentSongIndex];
-      _audioCache.play(song);
-    }
+    _player.play(
+        'https://p.scdn.co/mp3-preview/9bd44283c38194b2c852ca5a65439f2a636657a3?cid=774b29d4f13844c495f206cafdad9c86');
+    // if (_currentSongIndex != null) {
+    //   final song = queue[_currentSongIndex];
+    //   _audioCache.play(song);
+    // }
   }
 
   void nextSong() {
