@@ -8,6 +8,7 @@ class SpotifyService {
   static final _accountUrl = 'https://accounts.spotify.com';
   static const _clientId = '5b4181149f684d98a6ff32c5d453397f';
   static const _redirectUri = 'mliss:/';
+  static const _scopes = ['playlist-read-private'];
 
   String _token = '';
 
@@ -19,10 +20,11 @@ class SpotifyService {
     try {
       final result = await FlutterWebAuth.authenticate(
           url:
-              "$_accountUrl/authorize?client_id=$_clientId&response_type=code&redirect_uri=$_redirectUri",
+              "$_accountUrl/authorize?client_id=$_clientId&response_type=token&redirect_uri=$_redirectUri&scope=playlist-read-private",
           callbackUrlScheme: "mliss");
 
-      _token = Uri.parse(result).queryParameters['code'];
+      // TODO: Denne kunne vært mer robust
+      _token = Uri.parse(result).fragment.split("=")[1];
     } catch (err) {
       // TODO: Handle this bad boy
       print(err);
@@ -30,7 +32,8 @@ class SpotifyService {
   }
 
   Future<dynamic> getDiscoverWeekly() async {
-    final response = await get('$_apiUrl/playlists/37i9dQZEVXcDJfzZAoLJdz',
+    print(_apiUrl);
+    final response = await get('$_apiUrl/me/playlists',
         headers: {'Authorization': 'Bearer $_token'});
 
     if (response.statusCode == 200) {
