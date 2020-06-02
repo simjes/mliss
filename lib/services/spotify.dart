@@ -5,8 +5,6 @@ import 'package:http/http.dart';
 class SpotifyService {
   static const _apiUrl = 'https://api.spotify.com/v1';
   static const _clientId = '5b4181149f684d98a6ff32c5d453397f';
-  // TODO: Remove if I make repo public
-  static const _clientSecret = '';
 
   static const _tempToken = '';
 

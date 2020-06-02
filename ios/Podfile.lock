@@ -2,6 +2,8 @@ PODS:
   - audioplayers (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_web_auth (0.2.4):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - path_provider_macos (0.0.1):
@@ -10,6 +12,7 @@ PODS:
 DEPENDENCIES:
   - audioplayers (from `.symlinks/plugins/audioplayers/ios`)
   - Flutter (from `Flutter`)
+  - flutter_web_auth (from `.symlinks/plugins/flutter_web_auth/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - path_provider_macos (from `.symlinks/plugins/path_provider_macos/ios`)
 
@@ -18,6 +21,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audioplayers/ios"
   Flutter:
     :path: Flutter
+  flutter_web_auth:
+    :path: ".symlinks/plugins/flutter_web_auth/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   path_provider_macos:
@@ -26,6 +31,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audioplayers: 84f968cea3f2deab00ec4f8ff53358b3c0b3992c
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_web_auth: b7465086188ce4413d7e8b23622583784b9007a7
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   path_provider_macos: f760a3c5b04357c380e2fddb6f9db6f3015897e0
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mliss/screens/Player.dart';
+import 'package:mliss/screens/Login.dart';
 
 void main() {
   runApp(MlissApp());
@@ -14,7 +14,7 @@ class MlissApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: Player(),
+      home: Login(),
     );
   }
 }
