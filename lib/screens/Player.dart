@@ -4,6 +4,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/conditional_switch.dart';
+import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
 import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
@@ -12,12 +13,14 @@ import 'package:mliss/constants.dart';
 import 'package:mliss/services/spotify.dart';
 
 class Player extends StatefulWidget {
+  static const route = '/player';
+
   @override
   _PlayerState createState() => _PlayerState();
 }
 
 class _PlayerState extends State<Player> {
-  SpotifyService spotify;
+  // SpotifyService spotify;
   AudioPlayer _player;
   AudioCache _audioCache;
   AudioPlayerState _playerState;
@@ -39,9 +42,9 @@ class _PlayerState extends State<Player> {
   }
 
   void tempLoadDiscoverWeekly() async {
-    spotify = SpotifyService();
+    var spotifyService = Injector.getInjector().get<SpotifyService>();
 
-    final playlist = await spotify.getDiscoverWeekly();
+    final playlist = await spotifyService.getDiscoverWeekly();
     print(playlist);
   }
 
