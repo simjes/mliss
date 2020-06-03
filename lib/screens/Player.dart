@@ -44,7 +44,7 @@ class _PlayerState extends State<Player> {
   void tempLoadDiscoverWeekly() async {
     var spotifyService = Injector.getInjector().get<SpotifyService>();
 
-    final playlist = await spotifyService.getDiscoverWeekly();
+    final playlist = await spotifyService.getMyPlaylists();
     print(playlist);
   }
 

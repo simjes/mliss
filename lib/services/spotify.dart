@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart';
+import 'package:mliss/models/PlaylistDto.dart';
 
 class SpotifyService {
   static const _apiUrl = 'https://api.spotify.com/v1';
@@ -31,13 +32,13 @@ class SpotifyService {
     }
   }
 
-  Future<dynamic> getDiscoverWeekly() async {
-    print(_apiUrl);
-    final response = await get('$_apiUrl/me/playlists',
+  Future<PlaylistsDto> getMyPlaylists({int limit = 5, int offset = 0}) async {
+    final response = await get(
+        '$_apiUrl/me/playlists?limit=$limit&offset=$offset',
         headers: {'Authorization': 'Bearer $_token'});
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      return PlaylistsDto.fromJson(jsonDecode(response.body));
     }
 
     throw Exception('Failed to load');

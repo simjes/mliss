@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:mliss/screens/Login.dart';
 import 'package:mliss/screens/Player.dart';
+import 'package:mliss/screens/Playlist.dart';
 import 'package:mliss/services/spotify.dart';
 
 void main() {
@@ -22,6 +23,7 @@ class MlissApp extends StatelessWidget {
       initialRoute: Login.route,
       routes: {
         Login.route: (context) => Login(),
+        Playlists.route: (context) => Playlists(),
         Player.route: (context) => Player(),
       },
     );

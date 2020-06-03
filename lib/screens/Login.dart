@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
-import 'package:mliss/screens/Player.dart';
+import 'package:mliss/screens/Playlist.dart';
 import 'package:mliss/services/spotify.dart';
 
 class Login extends StatelessWidget {
@@ -17,7 +17,7 @@ class Login extends StatelessWidget {
 
               if (spotifyService.isAuthenicated) {
                 // navigate
-                Navigator.pushNamed(context, Player.route);
+                Navigator.pushNamed(context, Playlists.route);
               }
             },
             child: Text('login')),
