@@ -20,14 +20,17 @@ class Playlists extends HookWidget {
             final playlists = snapshot.data.items;
 
             return ListView.builder(
-              itemCount: snapshot.data.items.length,
+              itemCount: playlists.length,
               itemBuilder: (context, index) {
                 final playlist = playlists[index];
+                final image = playlist.images.length != 0
+                    ? NetworkImage(playlist.images[0].url)
+                    : AssetImage('assets/images/vinyl.png');
 
                 return Card(
                   child: ListTile(
                     leading: Image(
-                      image: NetworkImage(playlist.images[0].url),
+                      image: image,
                     ),
                     title: Text(
                       playlist.name,
