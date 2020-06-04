@@ -4,14 +4,12 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/conditional_switch.dart';
-import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
 import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
 import 'package:mliss/components/navigation-bar.dart';
 import 'package:mliss/components/vinyl.dart';
 import 'package:mliss/constants.dart';
-import 'package:mliss/services/spotify.dart';
 
 class Player extends StatefulWidget {
   static const route = '/player';

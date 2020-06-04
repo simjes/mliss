@@ -7,7 +7,6 @@ import 'package:mliss/models/PlaylistDto.dart';
 import 'package:mliss/services/spotify.dart';
 
 // TODO:
-// - background
 // - styling
 // - fade in image/blur
 // - click to view playlist
@@ -20,6 +19,7 @@ class Playlists extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: FutureBuilder(
         future: spotifyService.getMyPlaylists(limit: 50),
         builder: (BuildContext context, AsyncSnapshot<PlaylistsDto> snapshot) {

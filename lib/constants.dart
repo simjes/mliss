@@ -10,3 +10,11 @@ const kSliderHandleColor = Color(0xFFfa007d);
 const kSliderInactiveColor = Color(0xFF516065);
 
 const kSecondaryTextColor = Color(0xFF7491A6);
+
+// Trying something else with the colors
+
+const kBrightTurquoise = Color(0xFF12c2e9);
+const kLavender = Color(0xFFc471ed);
+const kCarnation = Color(0xFFf64f59);
+
+const kBottomSheetLinearGradient = [kBrightTurquoise, kLavender, kCarnation];
