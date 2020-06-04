@@ -145,6 +145,7 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     return MlissScaffold(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Center(

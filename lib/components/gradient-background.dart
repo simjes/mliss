@@ -19,12 +19,7 @@ class MlissScaffold extends StatelessWidget {
           colors: [kBackgroundLightColor, kBackgroundDarkColor],
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          useSafeArea ? SafeArea(child: child) : child,
-        ],
-      ),
+      child: useSafeArea ? SafeArea(child: child) : child,
     ));
   }
 }
