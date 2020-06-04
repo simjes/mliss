@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
+import 'package:mliss/models/PlaylistState.dart';
 import 'package:mliss/screens/Login.dart';
 import 'package:mliss/screens/Player.dart';
 import 'package:mliss/services/spotify.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   ModuleContainer().initialise(Injector.getInjector());
@@ -13,17 +15,20 @@ void main() {
 class MlissApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mliss',
-      themeMode: ThemeMode.dark,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
+    return ChangeNotifierProvider<PlaylistState>(
+      create: (context) => PlaylistState(),
+      child: MaterialApp(
+        title: 'Mliss',
+        themeMode: ThemeMode.dark,
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+        ),
+        initialRoute: Login.route,
+        routes: {
+          Login.route: (context) => Login(),
+          Player.route: (context) => Player(),
+        },
       ),
-      initialRoute: Login.route,
-      routes: {
-        Login.route: (context) => Login(),
-        Player.route: (context) => Player(),
-      },
     );
   }
 }

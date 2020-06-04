@@ -4,7 +4,9 @@ import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mliss/constants.dart';
 import 'package:mliss/models/PlaylistDto.dart';
+import 'package:mliss/models/PlaylistState.dart';
 import 'package:mliss/services/spotify.dart';
+import 'package:provider/provider.dart';
 
 // TODO:
 // - styling
@@ -15,6 +17,11 @@ import 'package:mliss/services/spotify.dart';
 class Playlists extends HookWidget {
   static const route = '/playlists';
   final spotifyService = Injector.getInjector().get<SpotifyService>();
+
+  void loadTracks(BuildContext context, String playlistId) async {
+    final tracks = await spotifyService.getTracks(playlistId: playlistId);
+    Provider.of<PlaylistState>(context, listen: false).setPlaylist(tracks);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +43,10 @@ class Playlists extends HookWidget {
 
                 return Card(
                   child: ListTile(
+                    onTap: () async {
+                      Navigator.pop(context);
+                      loadTracks(context, playlist.id);
+                    },
                     leading: Image(
                       image: image,
                     ),
