@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/conditional_switch.dart';
@@ -19,7 +16,6 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  // SpotifyService spotify;
   AudioPlayer _player;
   AudioPlayerState _playerState;
 
@@ -33,28 +29,28 @@ class _PlayerState extends State<Player> {
   @override
   void initState() {
     super.initState();
-    loadQueue();
+    // loadQueue();
     initPlayer();
   }
 
-  void loadQueue() async {
-    final manifest =
-        await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
-    final Map<String, dynamic> manifestMap = jsonDecode(manifest);
+  // void loadQueue() async {
+  //   final manifest =
+  //       await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
+  //   final Map<String, dynamic> manifestMap = jsonDecode(manifest);
 
-    final music = manifestMap.keys
-        .where((element) => element.contains('music/'))
-        .where((element) => element.contains('.mp3'))
-        .map((songPath) => songPath.replaceAll('assets/music/', ""))
-        .map((songPath) => Uri.decodeComponent(songPath))
-        .toList();
+  //   final music = manifestMap.keys
+  //       .where((element) => element.contains('music/'))
+  //       .where((element) => element.contains('.mp3'))
+  //       .map((songPath) => songPath.replaceAll('assets/music/', ""))
+  //       .map((songPath) => Uri.decodeComponent(songPath))
+  //       .toList();
 
-    queue = music;
+  //   queue = music;
 
-    if (queue.length > 0) {
-      _currentSongIndex = 1;
-    }
-  }
+  //   if (queue.length > 0) {
+  //     _currentSongIndex = 1;
+  //   }
+  // }
 
   void initPlayer() {
     _player = AudioPlayer();
