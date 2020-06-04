@@ -21,9 +21,7 @@ class Player extends StatefulWidget {
 class _PlayerState extends State<Player> {
   // SpotifyService spotify;
   AudioPlayer _player;
-  AudioCache _audioCache;
   AudioPlayerState _playerState;
-  bool playing = false;
 
   int _currentSongIndex;
 
@@ -60,7 +58,6 @@ class _PlayerState extends State<Player> {
 
   void initPlayer() {
     _player = AudioPlayer();
-    _audioCache = AudioCache(fixedPlayer: _player, prefix: 'music/');
 
     _player.onDurationChanged.listen((Duration duration) {
       setState(() {
@@ -81,14 +78,14 @@ class _PlayerState extends State<Player> {
     _player.onPlayerStateChanged.listen((AudioPlayerState playerState) {
       switch (playerState) {
         case AudioPlayerState.PLAYING:
-          setState(() {
-            playing = true;
-          });
+          // setState(() {
+          //   playing = true;
+          // });
           break;
         default:
-          setState(() {
-            playing = false;
-          });
+        // setState(() {
+        //   playing = false;
+        // });
       }
 
       // if (playerState == AudioPlayerState.COMPLETED) {
@@ -151,7 +148,7 @@ class _PlayerState extends State<Player> {
           Center(
             child: Vinyl(
               assetName: 'assets/music/cover.jpg',
-              playing: playing,
+              playing: _playerState == AudioPlayerState.PLAYING,
             ),
           ),
           // Container(

@@ -51,6 +51,7 @@ class Playlists extends HookWidget {
           }
 
           if (snapshot.hasError) {
+            // TODO
             return Text('placeholder error');
           }
 
