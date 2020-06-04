@@ -6,6 +6,13 @@ import 'package:mliss/constants.dart';
 import 'package:mliss/models/PlaylistDto.dart';
 import 'package:mliss/services/spotify.dart';
 
+// TODO:
+// - background
+// - styling
+// - fade in image/blur
+// - click to view playlist
+// - fast ratio på bildene
+
 class Playlists extends HookWidget {
   static const route = '/playlists';
   final spotifyService = Injector.getInjector().get<SpotifyService>();

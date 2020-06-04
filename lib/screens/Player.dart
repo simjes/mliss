@@ -8,6 +8,7 @@ import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
 import 'package:mliss/components/custom-slider-track-shape.dart';
 import 'package:mliss/components/gradient-background.dart';
+import 'package:mliss/components/navigation-bar.dart';
 import 'package:mliss/components/vinyl.dart';
 import 'package:mliss/constants.dart';
 import 'package:mliss/services/spotify.dart';
@@ -38,14 +39,6 @@ class _PlayerState extends State<Player> {
     super.initState();
     loadQueue();
     initPlayer();
-    tempLoadDiscoverWeekly();
-  }
-
-  void tempLoadDiscoverWeekly() async {
-    var spotifyService = Injector.getInjector().get<SpotifyService>();
-
-    final playlist = await spotifyService.getMyPlaylists();
-    print(playlist);
   }
 
   void loadQueue() async {
@@ -231,6 +224,7 @@ class _PlayerState extends State<Player> {
               ],
             ),
           ),
+          NavigationBar()
         ],
       ),
     );

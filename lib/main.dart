@@ -23,7 +23,6 @@ class MlissApp extends StatelessWidget {
       initialRoute: Login.route,
       routes: {
         Login.route: (context) => Login(),
-        Playlists.route: (context) => Playlists(),
         Player.route: (context) => Player(),
       },
     );
