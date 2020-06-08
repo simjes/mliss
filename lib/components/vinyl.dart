@@ -2,18 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class Vinyl extends HookWidget {
-  final String assetName;
+  final String imageUrl;
   final bool playing;
 
-  Vinyl({this.assetName, this.playing});
+  Vinyl({this.imageUrl, this.playing});
 
   @override
   Widget build(BuildContext context) {
     final controller = useAnimationController(duration: Duration(seconds: 60));
     final spin = useAnimation(Tween<double>(begin: 0, end: 2)
         .animate(CurvedAnimation(parent: controller, curve: Curves.linear)));
-
-    // controller.animateTo(target)
 
     playing ? controller.repeat() : controller.stop();
 
@@ -25,7 +23,10 @@ class Vinyl extends HookWidget {
           child: Container(
             child: CircleAvatar(
               radius: 70,
-              backgroundImage: AssetImage(assetName),
+              // TODO: Temp fallback image
+              backgroundImage: imageUrl.isNotEmpty
+                  ? NetworkImage(imageUrl)
+                  : AssetImage('assets/music/cover.jpg'),
             ),
           ),
         );

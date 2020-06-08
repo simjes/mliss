@@ -119,6 +119,9 @@ class _PlayerState extends State<Player> {
         // TODO: Eh where is my artist name at
         final artistName = currentTrack?.albumName ?? '';
 
+        // Hmm, ikke alle tracks har preview url - er nok de som er lasta opp selv
+        final songUrl = currentTrack?.url;
+
         return MlissScaffold(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,7 +129,7 @@ class _PlayerState extends State<Player> {
             children: <Widget>[
               Center(
                 child: Vinyl(
-                  assetName: 'assets/music/cover.jpg',
+                  imageUrl: currentTrack?.albumImageUrl ?? '',
                   playing: _playerState == AudioPlayerState.PLAYING,
                 ),
               ),
@@ -194,9 +197,8 @@ class _PlayerState extends State<Player> {
                             fallbackBuilder: (context) => IconButton(
                                   icon: Icon(Icons.play_arrow),
                                   onPressed: () {
-                                    if (currentTrack.url != null &&
-                                        currentTrack.url.isNotEmpty) {
-                                      play(currentTrack.url);
+                                    if (songUrl != null) {
+                                      play(songUrl);
                                     }
                                   },
                                 )),
