@@ -12,7 +12,7 @@ class PlaylistState extends ChangeNotifier {
 
   void setPlaylist(List<TrackDto> tracks) {
     _tracks = tracks;
-    _queue = tracks.map((track) => track.id);
+    _queue = tracks.map((track) => track.id).toList();
 
     notifyListeners();
   }

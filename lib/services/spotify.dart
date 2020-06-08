@@ -4,6 +4,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:http/http.dart';
 import 'package:mliss/models/PlaylistDto.dart';
 import 'package:mliss/models/TrackDto.dart';
+import 'package:mliss/utils.dart';
 
 class SpotifyService {
   static const _apiUrl = 'https://api.spotify.com/v1';
@@ -53,21 +54,21 @@ class SpotifyService {
         headers: {'Authorization': 'Bearer $_token'});
 
     if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      final tracks = json['tracks'];
-      final items = tracks['items'];
-      final unwrappedTracks = items.map((trackMap) {
-        return trackMap['track'];
-      });
+      return decodePlaylistJsonToTracks(response.body);
 
-      final wee = unwrappedTracks
-          .map((track) {
-            print(track);
-            return TrackDto.fromJson(track);
-          })
-          .toList()
-          .cast<List<TrackDto>>();
-      return wee;
+      // final json = jsonDecode(response.body);
+      // final tracks = json['tracks'];
+      // final items = tracks['items'];
+      // List<dynamic> ble = List<dynamic>.from(items);
+      // final unwrappedTracks = ble.map((trackMap) {
+      //   return trackMap['track'];
+      // });
+
+      // final wee = unwrappedTracks.map((track) {
+      //   print(track);
+      //   return TrackDto.fromJson(track);
+      // }).toList();
+      // return wee;
     }
 
     throw Exception('Failed to load');
