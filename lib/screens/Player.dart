@@ -127,11 +127,9 @@ class _PlayerState extends State<Player> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Center(
-                child: Vinyl(
-                  imageUrl: currentTrack?.albumImageUrl ?? '',
-                  playing: _playerState == AudioPlayerState.PLAYING,
-                ),
+              Vinyl(
+                imageUrl: currentTrack?.albumImageUrl ?? '',
+                playing: _playerState == AudioPlayerState.PLAYING,
               ),
               // Container(
               //   child: Image(

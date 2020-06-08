@@ -21,12 +21,21 @@ class Vinyl extends HookWidget {
         return Transform.rotate(
           angle: spin * 3.1415926535,
           child: Container(
-            child: CircleAvatar(
-              radius: 70,
-              // TODO: Temp fallback image
-              backgroundImage: imageUrl.isNotEmpty
-                  ? NetworkImage(imageUrl)
-                  : AssetImage('assets/music/cover.jpg'),
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                CircleAvatar(
+                  radius: 140,
+                  backgroundImage: AssetImage('assets/images/vinyl.png'),
+                ),
+                CircleAvatar(
+                  radius: 50,
+                  // TODO: Temp fallback image
+                  backgroundImage: imageUrl.isNotEmpty
+                      ? NetworkImage(imageUrl)
+                      : AssetImage('assets/music/cover.jpg'),
+                ),
+              ],
             ),
           ),
         );
