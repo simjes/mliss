@@ -7,6 +7,8 @@ import 'package:mliss/components/gradient-background.dart';
 import 'package:mliss/components/navigation-bar.dart';
 import 'package:mliss/components/vinyl.dart';
 import 'package:mliss/constants.dart';
+import 'package:mliss/models/PlaylistState.dart';
+import 'package:provider/provider.dart';
 
 class Player extends StatefulWidget {
   static const route = '/player';
@@ -19,38 +21,16 @@ class _PlayerState extends State<Player> {
   AudioPlayer _player;
   AudioPlayerState _playerState;
 
-  int _currentSongIndex;
-
   Duration _duration = Duration();
   Duration _position = Duration();
-
-  List<String> queue = [];
 
   @override
   void initState() {
     super.initState();
-    // loadQueue();
     initPlayer();
+
+    // TODO: Stop player if new playlist was chosen
   }
-
-  // void loadQueue() async {
-  //   final manifest =
-  //       await DefaultAssetBundle.of(context).loadString('AssetManifest.json');
-  //   final Map<String, dynamic> manifestMap = jsonDecode(manifest);
-
-  //   final music = manifestMap.keys
-  //       .where((element) => element.contains('music/'))
-  //       .where((element) => element.contains('.mp3'))
-  //       .map((songPath) => songPath.replaceAll('assets/music/', ""))
-  //       .map((songPath) => Uri.decodeComponent(songPath))
-  //       .toList();
-
-  //   queue = music;
-
-  //   if (queue.length > 0) {
-  //     _currentSongIndex = 1;
-  //   }
-  // }
 
   void initPlayer() {
     _player = AudioPlayer();
@@ -100,33 +80,27 @@ class _PlayerState extends State<Player> {
     });
   }
 
-  void play() async {
-    _player.play(
-        'https://p.scdn.co/mp3-preview/9bd44283c38194b2c852ca5a65439f2a636657a3?cid=774b29d4f13844c495f206cafdad9c86');
-    // if (_currentSongIndex != null) {
-    //   final song = queue[_currentSongIndex];
-    //   _audioCache.play(song);
-    // }
+  void play(String url) async {
+    _player.play(url);
   }
 
   void nextSong() {
-    _currentSongIndex++;
-    if (_currentSongIndex > queue.length - 1) {
-      _currentSongIndex = 0;
-    }
+    final playlistState = Provider.of<PlaylistState>(context, listen: false);
+    playlistState.nextSong();
+    final track = playlistState.currentTrack;
 
-    play();
+    play(track.url);
   }
 
   void previousSong() {
+    final playlistState = Provider.of<PlaylistState>(context, listen: false);
+
     if (_position.inSeconds < 2) {
-      _currentSongIndex--;
-      if (_currentSongIndex < 0) {
-        _currentSongIndex = queue.length - 1;
-      }
+      playlistState.previousSong();
     }
 
-    play();
+    final currentTrack = playlistState.currentTrack;
+    play(currentTrack.url);
   }
 
   void seekToSeconds(int seconds) async {
@@ -136,89 +110,108 @@ class _PlayerState extends State<Player> {
 
   @override
   Widget build(BuildContext context) {
-    return MlissScaffold(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Center(
-            child: Vinyl(
-              assetName: 'assets/music/cover.jpg',
-              playing: _playerState == AudioPlayerState.PLAYING,
-            ),
-          ),
-          // Container(
-          //   child: Image(
-          //     color: kSliderActiveStartColor,
-          //     colorBlendMode: BlendMode.softLight,
-          //     image: AssetImage('assets/music/cover.jpg'),
-          //   ),
-          // ),
-          Padding(
-            padding: EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text('California',
-                    style: TextStyle(
-                        fontSize: 50,
-                        fontFamily: 'Prompt',
-                        fontStyle: FontStyle.italic)),
-                Text('Michael Oakley',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: kSecondaryTextColor,
-                      fontWeight: FontWeight.bold,
-                    )),
-                SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    thumbColor: kSliderHandleColor,
-                    trackHeight: 3,
-                    overlayColor: kSliderHandleColor,
-                    thumbShape: CustomSliderThumbShape(),
-                    trackShape: CustomSliderTrackShape(),
-                    overlayShape: RoundSliderOverlayShape(overlayRadius: 10),
-                  ),
-                  child: Slider(
-                    value: _position.inSeconds.toDouble(),
-                    min: 0,
-                    max: _duration.inSeconds.toDouble(),
-                    onChanged: (double position) {
-                      setState(() {
-                        seekToSeconds(position.toInt());
-                      });
-                    },
-                  ),
+    return Consumer<PlaylistState>(
+      builder: (BuildContext context, value, Widget child) {
+        // Might need to optimize this structure
+
+        final currentTrack = value.currentTrack;
+        final trackName = currentTrack?.name ?? '';
+        // TODO: Eh where is my artist name at
+        final artistName = currentTrack?.albumName ?? '';
+
+        return MlissScaffold(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Center(
+                child: Vinyl(
+                  assetName: 'assets/music/cover.jpg',
+                  playing: _playerState == AudioPlayerState.PLAYING,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              ),
+              // Container(
+              //   child: Image(
+              //     color: kSliderActiveStartColor,
+              //     colorBlendMode: BlendMode.softLight,
+              //     image: AssetImage('assets/music/cover.jpg'),
+              //   ),
+              // ),
+              Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    IconButton(
-                        icon: Icon(Icons.skip_previous),
-                        onPressed: previousSong),
-                    ConditionalSwitch.single(
-                        context: context,
-                        valueBuilder: (context) => _playerState,
-                        caseBuilders: {
-                          AudioPlayerState.PLAYING: (context) => IconButton(
-                              icon: Icon(Icons.pause),
-                              onPressed: () => _player.pause()),
-                          AudioPlayerState.PAUSED: (context) => IconButton(
-                              icon: Icon(Icons.play_arrow),
-                              onPressed: () => _player.resume())
+                    Text('$trackName',
+                        style: TextStyle(
+                            fontSize: 50,
+                            fontFamily: 'Prompt',
+                            fontStyle: FontStyle.italic)),
+                    Text('$artistName',
+                        style: TextStyle(
+                          fontSize: 24,
+                          color: kSecondaryTextColor,
+                          fontWeight: FontWeight.bold,
+                        )),
+                    SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        thumbColor: kSliderHandleColor,
+                        trackHeight: 3,
+                        overlayColor: kSliderHandleColor,
+                        thumbShape: CustomSliderThumbShape(),
+                        trackShape: CustomSliderTrackShape(),
+                        overlayShape:
+                            RoundSliderOverlayShape(overlayRadius: 10),
+                      ),
+                      child: Slider(
+                        value: _position.inSeconds.toDouble(),
+                        min: 0,
+                        max: _duration.inSeconds.toDouble(),
+                        onChanged: (double position) {
+                          setState(() {
+                            seekToSeconds(position.toInt());
+                          });
                         },
-                        fallbackBuilder: (context) => IconButton(
-                            icon: Icon(Icons.play_arrow), onPressed: play)),
-                    IconButton(
-                        icon: Icon(Icons.skip_next), onPressed: nextSong),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.skip_previous),
+                            onPressed: previousSong),
+                        ConditionalSwitch.single(
+                            context: context,
+                            valueBuilder: (context) => _playerState,
+                            caseBuilders: {
+                              AudioPlayerState.PLAYING: (context) => IconButton(
+                                  icon: Icon(Icons.pause),
+                                  onPressed: () => _player.pause()),
+                              AudioPlayerState.PAUSED: (context) => IconButton(
+                                  icon: Icon(Icons.play_arrow),
+                                  onPressed: () => _player.resume())
+                            },
+                            fallbackBuilder: (context) => IconButton(
+                                  icon: Icon(Icons.play_arrow),
+                                  onPressed: () {
+                                    if (currentTrack.url != null &&
+                                        currentTrack.url.isNotEmpty) {
+                                      play(currentTrack.url);
+                                    }
+                                  },
+                                )),
+                        IconButton(
+                            icon: Icon(Icons.skip_next), onPressed: nextSong),
+                      ],
+                    )
                   ],
-                )
-              ],
-            ),
+                ),
+              ),
+              NavigationBar()
+            ],
           ),
-          NavigationBar()
-        ],
-      ),
+        );
+      },
     );
   }
 }
