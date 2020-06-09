@@ -1,3 +1,4 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'package:mliss/models/PlaylistState.dart';
@@ -19,6 +20,8 @@ class MlissApp extends StatelessWidget {
       create: (context) => PlaylistState(),
       child: MaterialApp(
         title: 'Mliss',
+        builder: BotToastInit(),
+        navigatorObservers: [BotToastNavigatorObserver()],
         themeMode: ThemeMode.dark,
         darkTheme: ThemeData(
           brightness: Brightness.dark,

@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/conditional_switch.dart';
 import 'package:mliss/components/custom-slider-thumb-shape.dart';
@@ -87,9 +88,17 @@ class _PlayerState extends State<Player> {
   void nextSong() {
     final playlistState = Provider.of<PlaylistState>(context, listen: false);
     playlistState.nextSong();
-    final track = playlistState.currentTrack;
 
-    play(track.url);
+    final track = playlistState.currentTrack;
+    if (track.url != null) {
+      play(track.url);
+      // snackbar with skipped song
+      return;
+    }
+
+    // Skip song with missing preview url
+    nextSong();
+    showSongSkippedToast();
   }
 
   void previousSong() {
@@ -99,13 +108,25 @@ class _PlayerState extends State<Player> {
       playlistState.previousSong();
     }
 
-    final currentTrack = playlistState.currentTrack;
-    play(currentTrack.url);
+    final track = playlistState.currentTrack;
+    if (track.url != null) {
+      play(track.url);
+      // snackbar with skipped song
+      return;
+    }
+
+    // Skip song with missing preview url
+    previousSong();
+    showSongSkippedToast();
   }
 
   void seekToSeconds(int seconds) async {
     final duration = Duration(seconds: seconds);
     await _player.seek(duration);
+  }
+
+  void showSongSkippedToast() {
+    BotToast.showText(text: "Song skipped");
   }
 
   @override
